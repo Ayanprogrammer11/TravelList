@@ -16,11 +16,14 @@ export default function App() {
   function handleAddItems(item) {
     setItems((prevItems) => [...prevItems, item]);
   }
+  function handleDeleteItem(id) {
+    setItems((prevItems) => prevItems.filter(item => item.id !== id));
+  }
   return (
     <div className="app">
       <Logo />
       <Form onAddItems={handleAddItems} />
-      <PackingList items={items} />
+      <PackingList items={items} onDeleteItem={handleDeleteItem} />
       <Stats />
     </div>
   );
@@ -30,10 +33,7 @@ function Logo() {
   return <h1>🌴 Far Away 💼</h1>;
 }
 
-/**
- * Renders a form for adding items to a travel list.
- * @returns {JSX.Element} The form component.
- */
+
 function Form({ onAddItems }) {
   const [description, setDescription] = useState("");
   const [quantity, setQuantity] = useState(1);
@@ -72,29 +72,30 @@ function Form({ onAddItems }) {
         onChange={(e) => setDescription(e.target.value)}
       />
       <button>Add</button>
-    </form>
+      </form>
   );
 }
 
-function PackingList({ items }) {
+function PackingList({ items, onDeleteItem }) {
   return (
     <div className="list">
       <ul>
         {items.map((item) => (
-          <Item item={item} key={item.id} />
+          <Item item={item} key={item.id} onDeleteItem={onDeleteItem} />
         ))}
       </ul>
     </div>
   );
 }
 
-function Item({ item }) {
+function Item({ item, onDeleteItem }) {
+  
   return (
     <li>
       <span style={item.packed ? { textDecoration: "line-through" } : {}}>
         {item.quantity} {item.description}
       </span>
-      <button>❌</button>
+      <button onClick={() => onDeleteItem(item.id)}>❌</button>
     </li>
   );
 }
